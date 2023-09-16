@@ -19,7 +19,7 @@ connection.query("select * from socialmedia", function (err, result, fields) {
 });
 
 
-app.get("/socialmedia/:id", (req, res) => {
+app.get("/:id", (req, res) => {
   const elem = req.params;
   
   connection.query("select * from socialmedia", function (err, result, fields) {
