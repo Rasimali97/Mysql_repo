@@ -13,7 +13,7 @@ let connection = mysql.createConnection({
 
 connection.query("select * from socialmedia", function (err, result, fields) {
   
-  app.get("/socialmedia", function (req, res) {
+  app.get("/", function (req, res) {
     res.send(result);
   });
 });
