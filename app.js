@@ -1,63 +1,70 @@
 const express = require("express");
 const mysql = require("mysql2");
-
+const bodyParser = require("body-parser");
 const app = express();
+var cors = require("cors");
+
+
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors());
 
 let connection = mysql.createConnection({
-  host: "boovkxtqcqckqxmiesaa-mysql.services.clever-cloud.com",
-  user: "ue1klfzskuwvozwt",
-  password: "2BIBqbc36V8rzWHlJcec",
-  database: "boovkxtqcqckqxmiesaa",
-});
-
-connection.query("select * from socialmedia", function (err, result, fields) {
-  
-  app.get("/", function (req, res) {
-    res.send(result);
+    host: "boovkxtqcqckqxmiesaa-mysql.services.clever-cloud.com",
+    user: "ue1klfzskuwvozwt",
+    password: "2BIBqbc36V8rzWHlJcec",
+    database: "boovkxtqcqckqxmiesaa",
   });
-});
 
-
-app.get("/:id", (req, res) => {
-  const elem = req.params;
+app.get("/users", function (req, res) {
+    connection.query("select * from users", function (err, result, fields) {
+      res.send(result);
+    });
+  });
   
-  connection.query("select * from socialmedia", function (err, result, fields) {
-   
-    for (let i = 0; i < result.length; i++) {
-      if (elem.id == result[i].PersonID) {
-        res.send(result[i]);
+app.get("/users/:id", (req, res) => {
+    const elem = req.params;
+    connection.query("select * from users", function (err, result, fields) {
+      for (let i = 0; i < result.length; i++) {
+        if (elem.id == result[i].id) {
+          res.send(result[i]);
+        }
       }
-    }
-  });
-});
-// delete method
-app.delete("/socialmedia/:id", (req, res) => {
-  const elem = req.params.id;
-  const silininenElementArray = db.filter(
-    (element) => element.actor_id != elem
-  );
-  connection.query(
-    `DELETE FROM socialmedia WHERE ID=${elem}`,
-    function (err, result, fields) {
-      console.log(result);
-    }
-  );
-});
-
-// post method
-app.post("/socialmedia/", (req, res) => {
-  let obj = req.body;
-  console.log(obj);
-  connection.query(
-    `INSERT INTO socialmedia (ID, FirstName , LastName)
-    VALUES ("${obj.ID}","${obj.FirstName}", "${obj.LastName}")`,
-    function (err, result, fields) {
-      app.get("/socialmedia", function (req, res) {
+    })
+  })
+  
+app.delete("/users/:id", (req, res) => {
+    const elem = req.params.id;
+    // const silininenElementArray = db.filter(
+    //   (element) => element.id != elem
+    // );
+    connection.query(
+      `DELETE FROM users WHERE id=${elem}`,
+      function (err, result, fields) {
+        console.log(result);
         res.send(result);
-      });
-    }
-  );
-});
-
-app.listen(process.env.PORT || 3000);
+      }
+    );
+  });
+  
+  app.post("/users/", (req, res) => {
+    let obj = req.body;
+    console.log(obj);
+    connection.query(
+      `INSERT INTO users (id, ad, soyad, password)
+      VALUES ("${obj.id}", "${obj.ad}", "${obj.soyad}", "${obj.password}")`,
+      function (err, result, fields) {
+          console.log(result);
+          app.get("/student", function (req, res) {
+            res.send(result);
+          });
+      }
+    );
+    connection.query("select * from users", function (err, result, fields) {
+      console.log(result);
+      res.send(result);
+    });
+  });
+  
+  
+  app.listen(process.env.PORT || 3000);
